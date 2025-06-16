@@ -45,8 +45,10 @@ class ClanRatingTracker(commands.Cog):
     @tasks.loop(time=time(hour=1, minute=5, tzinfo=timezone(timedelta(hours=3))))
     # @tasks.loop(minutes=1)
     async def daily_report(self):
-        timestamp, last_total, last_members = get_rating_at_time(datetime.now(timezone(timedelta(hours=3))) - timedelta(hours=2))
-        await self._send_report(timestamp, last_total, last_members)
+        now = datetime.now(TIMEZONE)
+        start_of_day = now.replace(hour=day_start[0], minute=day_start[1], second=0, microsecond=0)
+        old_timestamp, old_total, old_members = get_rating_at_time(start_of_day)
+        await self._send_report(old_timestamp, old_total, old_members)
 
     @hourly_report.before_loop
     async def before_check_ratings(self):
