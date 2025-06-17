@@ -1,6 +1,14 @@
-PyYAML~=6.0.2
-SQLAlchemy~=2.0.41
-requests~=2.32.4
-bs4~=0.0.2
-beautifulsoup4~=4.13.4
-discord.py
+# Core dependencies
+PyYAML>=6.0.2,<7.0.0
+SQLAlchemy>=2.0.41,<3.0.0
+requests>=2.32.4,<3.0.0
+beautifulsoup4>=4.13.4,<5.0.0
+discord.py>=2.3.2,<3.0.0
+lxml>=5.1.0,<6.0.0
+
+# Development dependencies (optional)
+# pytest>=7.4.0,<8.0.0
+# mypy>=1.7.0,<2.0.0
+# black>=23.11.0,<24.0.0
+# isort>=5.12.0,<6.0.0
+# flake8>=6.1.0,<7.0.0
