@@ -4,7 +4,7 @@ from typing import List, Tuple
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 
-from config import DB_FILE
+from config import DB_FILE, TIMEZONE
 
 engine = create_engine(f"sqlite:///{DB_FILE}", echo=False, future=True)
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
@@ -35,10 +35,11 @@ class MemberRating(Base):
     )
 
 
+def insert_rating(total_rating: int, members: List[Tuple[str, int]]):
+    now = datetime.now(TIMEZONE).replace(microsecond=0)
 
-def insert_rating(timestamp: datetime, total_rating: int, members: List[Tuple[str, int]]):
     session = SessionLocal()
-    clan_rating = ClanRating(timestamp=timestamp, total_rating=total_rating)
+    clan_rating = ClanRating(timestamp=now, total_rating=total_rating)
     clan_rating.members = [MemberRating(member_name=name, rating=rating) for name, rating in members]
     session.add(clan_rating)
     session.commit()
@@ -52,8 +53,9 @@ def get_last_rating():
         members = [(m.member_name, m.rating) for m in clan_rating.members]
         session.close()
         return clan_rating.timestamp, clan_rating.total_rating, members
-    session.close()
-    return None, None, None
+    else:
+        session.close()
+        return None, None, None
 
 
 def get_rating_at_time(target_time: datetime):
@@ -64,7 +66,7 @@ def get_rating_at_time(target_time: datetime):
         .order_by(ClanRating.timestamp.desc())
         .first()
     )
-    print(target_time)
+    # print(target_time)
     # print(session.query(ClanRating)
     #       .filter(ClanRating.timestamp <= target_time))
     # print(clan_rating)
