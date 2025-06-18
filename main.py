@@ -64,8 +64,7 @@ async def main():
     
     # Set up Discord bot
     intents = discord.Intents.default()
-    intents.message_content = True  # Enable message content intent if needed
-    
+
     bot = commands.Bot(command_prefix="/", intents=intents)
     
     @bot.event
