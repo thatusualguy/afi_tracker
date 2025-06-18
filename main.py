@@ -12,7 +12,7 @@ from logging.handlers import RotatingFileHandler
 import discord
 from discord.ext import commands
 
-from afi_tracker.bot import ClanRatingTracker
+from afi_tracker.bot import ClanRatingTracker, SlashCommands
 from afi_tracker.config import DISCORD_TOKEN
 from afi_tracker.database import init_db
 
@@ -70,12 +70,19 @@ async def main():
     @bot.event
     async def on_ready():
         logger.info(f"Logged in as {bot.user}")
+        try:
+            synced = await bot.tree.sync()
+            logger.info(f"Synced {len(synced)} command(s)")
+        except Exception as e:
+            logger.error(f"Failed to sync commands: {e}")
 
-    # Add cogs
+
+# Add cogs
     try:
         await bot.add_cog(ClanRatingTracker(bot))
+        await bot.add_cog(SlashCommands(bot))
     except Exception as e:
-        logger.error(f"Failed to add cog: {e}")
+        logger.error(f"Failed to add cogs: {e}")
         return
 
     # Start the bot

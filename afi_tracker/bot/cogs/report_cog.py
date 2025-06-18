@@ -23,17 +23,17 @@ logger = logging.getLogger(__name__)
 class ClanRatingTracker(commands.Cog):
     """
     Discord cog for tracking clan ratings and sending reports.
-    
+
     This cog periodically fetches clan ratings and sends reports to a Discord channel.
     It provides two types of reports:
     1. Hourly reports comparing to the last rating
     2. Daily reports comparing to the rating at the start of the day
     """
-    
+
     def __init__(self, bot: commands.Bot):
         """
         Initialize the ClanRatingTracker cog.
-        
+
         Args:
             bot: The Discord bot instance
         """
@@ -41,7 +41,7 @@ class ClanRatingTracker(commands.Cog):
         logger.info("Initializing ClanRatingTracker cog")
         self.hourly_report.start()
         self.daily_report.start()
-    
+
     def cog_unload(self):
         """
         Clean up when the cog is unloaded.
@@ -49,11 +49,11 @@ class ClanRatingTracker(commands.Cog):
         logger.info("Unloading ClanRatingTracker cog")
         self.hourly_report.cancel()
         self.daily_report.cancel()
-    
+
     async def _send_report(self, old_time: Optional[datetime], old_total: Optional[int], old_members: Optional[List[Tuple[str, int]]]):
         """
         Fetch new ratings and send a report comparing to old ratings.
-        
+
         Args:
             old_time: Timestamp of the old rating
             old_total: Total clan rating from the old rating
@@ -63,11 +63,11 @@ class ClanRatingTracker(commands.Cog):
         if not channel:
             logger.error(f"Channel with ID {CHANNEL_ID} not found")
             return
-        
+
         try:
             logger.info(f"Fetching new ratings for clan {CLAN_NAME}")
             new_rating, new_members = get_ratings(CLAN_NAME)
-            
+
             # Store the new rating in the database
             try:
                 insert_rating(new_rating, new_members)
@@ -76,19 +76,19 @@ class ClanRatingTracker(commands.Cog):
                 logger.error(f"Failed to store rating in database: {e}")
                 await channel.send(f"Ошибка при сохранении рейтинга: {e}")
                 return
-            
+
             # If this is the first rating (no old data), just acknowledge
             if old_total is None or old_members is None or old_time is None:
                 logger.info("No previous rating data available")
                 await channel.send("Чистый запуск. Данные сохранены.")
                 return
-            
+
             # Calculate member changes
             member_delta = get_member_delta(old_members, new_members)
             if not member_delta:
                 logger.info("No rating changes to report")
                 return
-            
+
             # Generate and send the report
             try:
                 report_embed = generate_report(old_time, old_total, old_members, new_rating, new_members)
@@ -97,11 +97,11 @@ class ClanRatingTracker(commands.Cog):
             except Exception as e:
                 logger.error(f"Failed to generate or send report: {e}")
                 await channel.send(f"Ошибка при создании отчета: {e}")
-        
+
         except Exception as e:
             logger.error(f"Error in _send_report: {e}")
             await channel.send(f"Произошла ошибка при получении рейтинга: {e}")
-    
+
     @tasks.loop(time=regular_report_times)
     async def hourly_report(self):
         """
@@ -113,7 +113,7 @@ class ClanRatingTracker(commands.Cog):
             await self._send_report(timestamp, last_total, last_members)
         except Exception as e:
             logger.error(f"Error in hourly_report: {e}")
-    
+
     @tasks.loop(time=end_of_day_report_time)
     async def daily_report(self):
         """
@@ -127,7 +127,7 @@ class ClanRatingTracker(commands.Cog):
             await self._send_report(old_timestamp, old_total, old_members)
         except Exception as e:
             logger.error(f"Error in daily_report: {e}")
-    
+
     @hourly_report.before_loop
     async def before_hourly_report(self):
         """
@@ -135,7 +135,7 @@ class ClanRatingTracker(commands.Cog):
         """
         logger.info("Waiting for bot to be ready before starting hourly report")
         await self.bot.wait_until_ready()
-    
+
     @daily_report.before_loop
     async def before_daily_report(self):
         """
@@ -143,3 +143,4 @@ class ClanRatingTracker(commands.Cog):
         """
         logger.info("Waiting for bot to be ready before starting daily report")
         await self.bot.wait_until_ready()
+

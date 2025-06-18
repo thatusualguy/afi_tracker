@@ -3,6 +3,6 @@
 Discord bot functionality for the AFI Tracker.
 """
 
-from .cogs import ClanRatingTracker
+from .cogs import ClanRatingTracker, SlashCommands
 
-__all__ = ["ClanRatingTracker"]
+__all__ = ["ClanRatingTracker", "SlashCommands"]
