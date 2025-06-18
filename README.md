@@ -34,7 +34,7 @@ The project is organized into the following modules:
 
 3. Launch deploy.sh script:
    ```shell
-   deploy.sh
+   .\afi_tracker\deploy.sh
    ```
 
 ## Configuration
