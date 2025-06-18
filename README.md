@@ -27,17 +27,15 @@ The project is organized into the following modules:
 ## Installation
 
 1. Clone the repository
-2. Create a virtual environment:
+   ```shell
+   git clone https://github.com/thatusualguy/afi_tracker.git
    ```
-   python -m venv .venv
-   .venv\Scripts\activate  # Windows
-   source .venv/bin/activate  # Linux/Mac
+2. Configure the bot by editing `config.yaml`
+
+3. Launch deploy.sh script:
+   ```shell
+   deploy.sh
    ```
-3. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-4. Configure the bot by editing `config.yaml`
 
 ## Configuration
 
@@ -81,17 +79,3 @@ The bot will:
 2. Connect to Discord
 3. Start fetching clan ratings at the configured intervals
 4. Send reports to the configured Discord channel
-
-## Development
-
-For development, you can uncomment the development dependencies in `requirements.txt` and install them:
-
-```
-pip install -r requirements.txt
-```
-
-This will install tools for testing, type checking, and code formatting.
-
-## License
-
-This project is open source and available under the MIT License.
