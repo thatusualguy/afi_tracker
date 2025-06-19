@@ -6,7 +6,7 @@ like /today that provide on-demand information without affecting the automated t
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import discord
 from discord import app_commands
@@ -61,7 +61,9 @@ class SlashCommands(commands.Cog):
 
             # Get start of day time
             now = datetime.now(TIMEZONE)
-            start_of_day = now.replace(hour=day_start[0], minute=day_start[1], second=0, microsecond=0)
+            start_of_day = now.replace(hour=day_start[0]+1, minute=day_start[1], second=0, microsecond=0)
+            if now.hour < 2:
+                start_of_day = start_of_day - timedelta(days=1)
 
             # Get rating from start of day from database
             old_timestamp, old_total, old_members = get_rating_at_time(start_of_day)

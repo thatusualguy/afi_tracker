@@ -6,7 +6,7 @@ clan ratings and sends reports to a Discord channel.
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, Tuple, List
 
 import discord
@@ -122,7 +122,9 @@ class ClanRatingTracker(commands.Cog):
         logger.info("Running daily report")
         try:
             now = datetime.now(TIMEZONE)
-            start_of_day = now.replace(hour=day_start[0], minute=day_start[1], second=0, microsecond=0)
+            start_of_day = now.replace(hour=day_start[0]+1, minute=day_start[1], second=0, microsecond=0)
+            if now.hour < 2:
+                start_of_day = start_of_day - timedelta(days=1)
             old_timestamp, old_total, old_members = get_rating_at_time(start_of_day)
             await self._send_report(old_timestamp, old_total, old_members)
         except Exception as e:
