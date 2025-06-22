@@ -15,11 +15,11 @@ A Discord bot for tracking War Thunder clan ratings and reporting changes.
 The project is organized into the following modules:
 
 - `afi_tracker/` - Main package
-  - `config/` - Configuration management
-  - `database/` - Database models and operations
-  - `scraping/` - Web scraping functionality
-  - `utils/` - Utility functions for report generation
-  - `bot/` - Discord bot functionality
+    - `config/` - Configuration management
+    - `database/` - Database models and operations
+    - `scraping/` - Web scraping functionality
+    - `utils/` - Utility functions for report generation
+    - `bot/` - Discord bot functionality
 - `main.py` - Entry point for the application
 - `config.yaml` - Configuration file
 - `requirements.txt` - Dependencies
@@ -36,6 +36,11 @@ The project is organized into the following modules:
    ```shell
    .\afi_tracker\deploy.sh
    ```
+   
+    - Pulls latest version
+    - Creates venv
+    - Installs packages
+    - Launch main.py in tmux
 
 ## Configuration
 
@@ -52,8 +57,8 @@ db_file: "clan_ratings.db"
 
 # Time configuration
 timezone_offset: 3  # Hours from UTC
-day_start: [17, 0]  # Hour, minute
-day_end: [1, 0]  # Hour, minute
+day_start: [ 17, 0 ]  # Hour, minute
+day_end: [ 1, 0 ]  # Hour, minute
 report_interval: 30  # Minutes between reports
 end_of_day_hour: 1
 end_of_day_minute: 5
@@ -70,11 +75,12 @@ max_report_entries: 50
 
 Run the bot:
 
-```
-python main.py
-```
+   ```shell
+   .\afi_tracker\deploy.sh
+   ```
 
 The bot will:
+
 1. Initialize the database if it doesn't exist
 2. Connect to Discord
 3. Start fetching clan ratings at the configured intervals

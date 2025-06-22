@@ -5,6 +5,8 @@ set -e  # Exit on any error
 
 echo "🚀 Starting AFI Tracker deployment..."
 
+cd "$(dirname "$0")"
+
 # Pull latest changes
 echo "📥 Pulling latest changes from git..."
 git pull
