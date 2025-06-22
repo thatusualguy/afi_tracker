@@ -5,11 +5,10 @@ This module handles loading configuration from YAML files and environment variab
 and provides access to configuration values throughout the application.
 """
 
-import os
 import logging
+import os
 from datetime import timezone, timedelta, time
-from pathlib import Path
-from typing import Dict, Any, Tuple, List, Optional
+from typing import Dict, Any, Tuple, List
 
 import yaml
 
@@ -17,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 # Default configuration file path
 CONFIG_FILE = "config.yaml"
+
 
 def load_config(filename: str) -> Dict[str, Any]:
     """
@@ -44,6 +44,7 @@ def load_config(filename: str) -> Dict[str, Any]:
         logger.error(f"Error parsing configuration file: {e}")
         raise
 
+
 # Load configuration
 try:
     config = load_config(CONFIG_FILE)
@@ -67,6 +68,7 @@ TIMEZONE = timezone(timedelta(hours=TIMEZONE_OFFSET))
 day_start: Tuple[int, int] = tuple(config.get("day_start", (17, 0)))
 day_end: Tuple[int, int] = tuple(config.get("day_end", (1, 0)))
 
+
 # Report times
 def _generate_report_times() -> List[time]:
     """Generate a list of times for regular reports throughout the day."""
@@ -75,6 +77,7 @@ def _generate_report_times() -> List[time]:
         time(hour=x // 60, minute=x % 60, tzinfo=TIMEZONE)
         for x in range(0, 24 * 60, interval_minutes)
     ]
+
 
 regular_report_times: List[time] = _generate_report_times()
 end_of_day_report_time: time = time(

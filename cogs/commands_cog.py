@@ -12,10 +12,10 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from afi_tracker.config import CLAN_NAME, TIMEZONE, day_start
-from afi_tracker.database import get_rating_at_time
-from afi_tracker.scraping import get_ratings
-from afi_tracker.utils import get_member_delta, generate_report
+from config import CLAN_NAME, TIMEZONE, day_start
+from models import get_rating_at_time
+from scraper import get_ratings
+from utils import get_member_delta, generate_report
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class SlashCommands(commands.Cog):
 
             # Get start of day time
             now = datetime.now(TIMEZONE)
-            start_of_day = now.replace(hour=day_start[0]+1, minute=day_start[1], second=0, microsecond=0)
+            start_of_day = now.replace(hour=day_start[0] + 1, minute=day_start[1], second=0, microsecond=0)
             if now.hour < 2:
                 start_of_day = start_of_day - timedelta(days=1)
 

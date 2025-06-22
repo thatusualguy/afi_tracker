@@ -6,7 +6,7 @@ This module handles fetching clan ratings from the War Thunder website.
 
 import logging
 import time
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 from urllib.parse import quote
 
 import requests
@@ -42,16 +42,16 @@ def get_ratings(clan_name: str, retries: int = MAX_RETRIES) -> tuple[int, list[t
     """
     url = f"https://warthunder.com/en/community/claninfo/{quote(clan_name)}"
     headers = {"User-Agent": USER_AGENT}
-    
+
     logger.info(f"Fetching ratings for clan: {clan_name}")
-    
+
     for attempt in range(retries):
         try:
             response = requests.get(url, headers=headers, timeout=30)
             response.raise_for_status()  # Raise exception for 4XX/5XX responses
-            
+
             return _parse_ratings(response.text)
-            
+
         except RequestException as e:
             logger.warning(f"Request failed (attempt {attempt + 1}/{retries}): {e}")
             if attempt < retries - 1:
@@ -80,38 +80,38 @@ def _parse_ratings(html_content: str) -> Tuple[int, List[Tuple[str, int]]]:
     """
     try:
         soup = BeautifulSoup(html_content, "lxml")
-        
+
         # Extract total rating
         total_rating_tags = soup.select("div.squadrons-counter__value")
         if not total_rating_tags:
             raise ScraperError("Total rating element not found")
-        
+
         total_rating_tag = total_rating_tags[0]
         try:
             total_rating: int = int(total_rating_tag.text.strip())
         except ValueError as e:
             raise ScraperError(f"Invalid total rating value: {total_rating_tag.text.strip()}") from e
-        
+
         # Extract member ratings
         members = soup.select("div.squadrons-members__grid-item")
         if not members or len(members) < 7:
             raise ScraperError("Member elements not found or insufficient data")
-        
+
         try:
             names = [member.text.strip() for member in members[7::6]]
             ratings = [int(member.text.strip()) for member in members[8::6]]
         except (ValueError, IndexError) as e:
             raise ScraperError(f"Error extracting member data: {e}") from e
-        
+
         if len(names) != len(ratings):
             raise ScraperError(f"Mismatch between names ({len(names)}) and ratings ({len(ratings)})")
-        
+
         result = list(zip(names, ratings))
         result.sort(key=lambda member: member[1], reverse=True)
-        
+
         logger.info(f"Successfully parsed ratings: total={total_rating}, members={len(result)}")
         return total_rating, result
-        
+
     except Exception as e:
         if not isinstance(e, ScraperError):
             logger.error(f"Error parsing HTML: {e}")

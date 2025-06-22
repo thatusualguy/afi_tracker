@@ -9,13 +9,12 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional, Tuple, List
 
-import discord
 from discord.ext import commands, tasks
 
-from afi_tracker.config import CHANNEL_ID, CLAN_NAME, TIMEZONE, day_start, regular_report_times, end_of_day_report_time
-from afi_tracker.database import get_last_rating, get_rating_at_time, insert_rating
-from afi_tracker.scraping import get_ratings
-from afi_tracker.utils import get_member_delta, generate_report
+from config import CHANNEL_ID, CLAN_NAME, TIMEZONE, day_start, regular_report_times, end_of_day_report_time
+from models import get_last_rating, get_rating_at_time, insert_rating
+from scraper import get_ratings
+from utils import get_member_delta, generate_report
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +49,8 @@ class ClanRatingTracker(commands.Cog):
         self.hourly_report.cancel()
         self.daily_report.cancel()
 
-    async def _send_report(self, old_time: Optional[datetime], old_total: Optional[int], old_members: Optional[List[Tuple[str, int]]]):
+    async def _send_report(self, old_time: Optional[datetime], old_total: Optional[int],
+                           old_members: Optional[List[Tuple[str, int]]]):
         """
         Fetch new ratings and send a report comparing to old ratings.
 
@@ -122,7 +122,7 @@ class ClanRatingTracker(commands.Cog):
         logger.info("Running daily report")
         try:
             now = datetime.now(TIMEZONE)
-            start_of_day = now.replace(hour=day_start[0]+1, minute=day_start[1], second=0, microsecond=0)
+            start_of_day = now.replace(hour=day_start[0] + 1, minute=day_start[1], second=0, microsecond=0)
             if now.hour < 2:
                 start_of_day = start_of_day - timedelta(days=1)
             old_timestamp, old_total, old_members = get_rating_at_time(start_of_day)
@@ -145,4 +145,3 @@ class ClanRatingTracker(commands.Cog):
         """
         logger.info("Waiting for bot to be ready before starting daily report")
         await self.bot.wait_until_ready()
-
