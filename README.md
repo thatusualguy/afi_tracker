@@ -2,27 +2,42 @@
 
 A Discord bot for tracking War Thunder clan ratings and reporting changes.
 
+Built with the **[discord.py](https://github.com/Rapptz/discord.py)** library for Discord integration and *
+*[BeautifulSoup](https://github.com/wention/BeautifulSoup4)** for parsing webpage.
+
 ## Features
 
 - Periodically fetches clan ratings from the War Thunder website
-- Stores ratings in a SQLite database
+- Stores ratings in an SQLite database
 - Generates reports on rating changes
 - Sends reports to a Discord channel
 - Provides both regular (hourly) and daily reports
+- Interactive slash commands for on-demand information
+
+## Available Commands
+
+The bot provides the following slash commands:
+
+- `/сегодня` - Shows rating changes from the start of the day to the current moment
+    - Displays member rating changes without affecting the automated tracking
+    - Provides real-time comparison with the beginning of the day
 
 ## Project Structure
 
-The project is organized into the following modules:
+The project is organized with the following files and directories:
 
-- `afi_tracker/` - Main package
-    - `config/` - Configuration management
-    - `database/` - Database models and operations
-    - `scraping/` - Web scraping functionality
-    - `utils/` - Utility functions for report generation
-    - `bot/` - Discord bot functionality
 - `main.py` - Entry point for the application
+- `config.py` - Configuration management
 - `config.yaml` - Configuration file
-- `requirements.txt` - Dependencies
+- `models.py` - Database models and operations
+- `scraper.py` - Web scraping functionality for War Thunder ratings
+- `utils.py` - Utility functions for report generation
+- `cogs/` - Discord bot cogs (modular components)
+    - `commands_cog.py` - Slash commands handling
+    - `report_cog.py` - Automated reporting functionality
+- `deploy.sh` - Deployment script
+- `clan_ratings.db` - SQLite database (created automatically)
+- `afi_tracker.log` - Application logs
 
 ## Installation
 
@@ -36,11 +51,11 @@ The project is organized into the following modules:
    ```shell
    .\afi_tracker\deploy.sh
    ```
-   
+
     - Pulls latest version
     - Creates venv
     - Installs packages
-    - Launch main.py in tmux
+    - Launches main.py in tmux
 
 ## Configuration
 
