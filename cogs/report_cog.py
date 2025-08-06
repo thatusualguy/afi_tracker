@@ -110,7 +110,7 @@ class ClanRatingTracker(commands.Cog):
         logger.info("Running hourly report")
         try:
             timestamp, last_total, last_members = get_last_rating()
-            await self._send_report(timestamp, last_total, last_members)
+            # await self._send_report(timestamp, last_total, last_members)
         except Exception as e:
             logger.error(f"Error in hourly_report: {e}")
 
