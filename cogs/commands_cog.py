@@ -6,13 +6,14 @@ like /today that provide on-demand information without affecting the automated t
 """
 
 import logging
+import os
 from datetime import datetime, timedelta
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from config import CLAN_NAME, TIMEZONE, day_start
+from config import CLAN_NAME, TIMEZONE, day_start, DB_FILE
 from models import get_rating_at_time
 from scraper import get_ratings
 from utils import get_member_delta, generate_report
@@ -94,3 +95,41 @@ class SlashCommands(commands.Cog):
         except Exception as e:
             logger.error(f"Error in today_command: {e}")
             await interaction.followup.send(f"Произошла ошибка при получении рейтинга: {e}")
+
+    @app_commands.command(name="database", description="Send the database file to chat")
+    async def database_command(self, interaction: discord.Interaction):
+        """
+        Slash command to send the database file to the Discord channel.
+        
+        Args:
+            interaction: Discord interaction context
+        """
+        logger.info(f"Database command invoked by {interaction.user}")
+        
+        try:
+            # Defer the response since file upload might take a while
+            await interaction.response.defer()
+            
+            # Check if database file exists
+            if not os.path.exists(DB_FILE):
+                await interaction.followup.send("Database file not found.")
+                logger.warning(f"Database file not found at {DB_FILE}")
+                return
+            
+            # Get file size for logging
+            file_size = os.path.getsize(DB_FILE)
+            logger.info(f"Sending database file: {DB_FILE} (size: {file_size} bytes)")
+            
+            # Create Discord file object and send it
+            with open(DB_FILE, 'rb') as f:
+                discord_file = discord.File(f, filename=os.path.basename(DB_FILE))
+                await interaction.followup.send(
+                    content=f"Database file: {os.path.basename(DB_FILE)}",
+                    file=discord_file
+                )
+            
+            logger.info(f"Successfully sent database file to {interaction.user}")
+            
+        except Exception as e:
+            logger.error(f"Error in database_command: {e}")
+            await interaction.followup.send(f"Error sending database file: {e}")
