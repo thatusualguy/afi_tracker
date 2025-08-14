@@ -50,7 +50,7 @@ class ClanRatingTracker(commands.Cog):
         self.daily_report.cancel()
 
     async def _send_report(self, old_time: Optional[datetime], old_total: Optional[int],
-                           old_members: Optional[List[Tuple[str, int]]]):
+                           old_members: Optional[List[Tuple[str, int]]], silence = False):
         """
         Fetch new ratings and send a report comparing to old ratings.
 
@@ -77,7 +77,7 @@ class ClanRatingTracker(commands.Cog):
                 await channel.send(f"Ошибка при сохранении рейтинга: {e}")
                 return
 
-            # If this is the first rating (no old data), just acknowledge
+            # If this is the first rating (no old data), acknowledge
             if old_total is None or old_members is None or old_time is None:
                 logger.info("No previous rating data available")
                 await channel.send("Чистый запуск. Данные сохранены.")
@@ -90,6 +90,8 @@ class ClanRatingTracker(commands.Cog):
                 return
 
             # Generate and send the report
+            if silence:
+                return
             try:
                 report_embed = generate_report(old_time, old_total, old_members, new_rating, new_members)
                 await channel.send(embed=report_embed)
@@ -110,7 +112,7 @@ class ClanRatingTracker(commands.Cog):
         logger.info("Running hourly report")
         try:
             timestamp, last_total, last_members = get_last_rating()
-            # await self._send_report(timestamp, last_total, last_members)
+            await self._send_report(timestamp, last_total, last_members, silence=True)
         except Exception as e:
             logger.error(f"Error in hourly_report: {e}")
 
