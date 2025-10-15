@@ -113,7 +113,7 @@ class SlashCommands(commands.Cog):
         """
         logger.info(f"Compare command invoked by {interaction.user} for date {compare_date} time {compare_time}")
 
-        if compare_date.count('.') < 3:
+        if compare_date.count('.') < 2:
             compare_date += '.' + str(datetime.now().year)
 
         try:
