@@ -73,9 +73,12 @@ day_end: Tuple[int, int] = tuple(config.get("day_end", (1, 0)))
 def _generate_report_times() -> List[time]:
     """Generate a list of times for regular reports throughout the day."""
     interval_minutes = int(os.environ.get("AFI_REPORT_INTERVAL") or config.get("report_interval", 30))
+    minutes = [*list(range(1*60, 2 * 60, interval_minutes)),
+               *list(range(17 * 60, 24 * 60, interval_minutes))]
+    print(minutes)
     return [
         time(hour=x // 60, minute=x % 60, tzinfo=TIMEZONE)
-        for x in range(0, 24 * 60, interval_minutes)
+        for x in minutes
     ]
 
 

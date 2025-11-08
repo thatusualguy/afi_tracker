@@ -4,9 +4,10 @@ Discord bot cog for tracking clan ratings and sending reports.
 This module defines the ClanRatingTracker cog, which periodically fetches
 clan ratings and sends reports to a Discord channel.
 """
-
+import asyncio
 import logging
 from datetime import datetime, timedelta
+from random import random
 from typing import Optional, Tuple, List
 
 from discord.ext import commands, tasks
@@ -50,7 +51,7 @@ class ClanRatingTracker(commands.Cog):
         self.daily_report.cancel()
 
     async def _send_report(self, old_time: Optional[datetime], old_total: Optional[int],
-                           old_members: Optional[List[Tuple[str, int]]], silence = False):
+                           old_members: Optional[List[Tuple[str, int]]], silence=False):
         """
         Fetch new ratings and send a report comparing to old ratings.
 
@@ -111,6 +112,7 @@ class ClanRatingTracker(commands.Cog):
         """
         logger.info("Running hourly report")
         try:
+            await asyncio.sleep(random() * 90 + 30)
             timestamp, last_total, last_members = get_last_rating()
             await self._send_report(timestamp, last_total, last_members, silence=True)
         except Exception as e:
